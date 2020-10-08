@@ -6,6 +6,8 @@ data.
 The crate is basically a [newtype][newtype] wrapper around [Serde JSON][serde_json]'s `Map` type and provides methods
 to JSON Feed properties.
 
+* [Latest API Documentation][api_docs]
+
 ## Installation
 
 By default, features which depend on the Rust `std` library are included.
@@ -171,3 +173,4 @@ dual licensed as above, without any additional terms or conditions.
 [jsonfeed]: https://jsonfeed.org/
 [newtype]: https://doc.rust-lang.org/rust-by-example/generics/new_types.html
 [serde_json]: https://github.com/serde-rs/json
+[api_docs]: https://docs.rs/json-feed-model/
