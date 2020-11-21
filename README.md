@@ -14,7 +14,7 @@ By default, features which depend on the Rust `std` library are included.
 
 ```toml
 [dependencies]
-json_feed_model = "0.1"
+json-feed-model = "0.1"
 ```
 
 ### Alloc Only
@@ -23,7 +23,7 @@ If the host environment has an allocator but does not have access to the Rust `s
 
 ```toml
 [dependencies]
-json_feed_model = { version = "0.1", default-features = false, features = ["alloc"]}
+json-feed-model = { version = "0.1", default-features = false, features = ["alloc"]}
 ```
 
 ## Examples
