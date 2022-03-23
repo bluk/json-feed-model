@@ -7,7 +7,8 @@ description = "JSON Feed model"
 edition = "2018"
 repository = "https://github.com/bluk/json-feed-model"
 readme = "README.md"
-keywords = ["jsonfeed", "feed", "json"]
+keywords = ["jsonfeed", "feed", "json", "serialization", "serde"]
+categories = ["encoding", "no-std"]
 include = [
   "src/**/*.rs",
   "Cargo.toml",
