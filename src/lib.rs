@@ -2026,7 +2026,7 @@ mod tests {
         let feed = super::from_value(json).unwrap();
 
         assert!(feed.is_valid(&Version::Version1_1));
-        assert_eq!(feed.is_valid(&Version::Version1), false);
+        assert!(!feed.is_valid(&Version::Version1));
 
         Ok(())
     }
