@@ -351,8 +351,7 @@ macro_rules! get_set_rm_bool {
         get_set_rm_bool!($key_expr, $getter, $getter_doc, $setter, $setter_doc);
 
         #[doc=$remover_doc]
-        pub fn $remover(&mut self) -> Option<Value>
-        {
+        pub fn $remover(&mut self) -> Option<Value> {
             self.value.remove($key_expr)
         }
     };
@@ -361,8 +360,7 @@ macro_rules! get_set_rm_bool {
         get_set_rm_bool!($key_expr, $getter, $getter_doc);
 
         #[doc=$setter_doc]
-        pub fn $setter<T>(&mut self, value: bool) -> Option<Value>
-        {
+        pub fn $setter<T>(&mut self, value: bool) -> Option<Value> {
             self.value
                 .insert(String::from($key_expr), Value::Bool(value))
         }
@@ -433,7 +431,13 @@ macro_rules! get_ref_get_ref_mut_set_rm_obj {
         $setter:ident, $setter_type:ty, $setter_doc:expr,
         $remover:ident, $remover_doc:expr
     ) => {
-        get_ref_get_ref_mut_set_rm_obj!($key_expr, $getter_ref, $getter_ref_type, $getter_ref_new, $getter_ref_doc);
+        get_ref_get_ref_mut_set_rm_obj!(
+            $key_expr,
+            $getter_ref,
+            $getter_ref_type,
+            $getter_ref_new,
+            $getter_ref_doc
+        );
 
         #[doc=$getter_ref_mut_doc]
         pub fn $getter_ref_mut(&mut self) -> Result<Option<$getter_ref_mut_type>, Error> {
