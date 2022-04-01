@@ -8,6 +8,15 @@
 
 #![doc = include_str!("../README.md")]
 #![cfg_attr(not(feature = "std"), no_std)]
+#![cfg_attr(docsrs, feature(doc_cfg))]
+#![warn(
+    missing_copy_implementations,
+    missing_debug_implementations,
+    missing_docs,
+    rust_2018_idioms,
+    unused_lifetimes,
+    unused_qualifications
+)]
 
 #[cfg(all(not(feature = "std"), feature = "alloc", not(test)))]
 extern crate alloc;
@@ -467,7 +476,7 @@ macro_rules! trait_for_borrowed_type {
         }
 
         impl<'a> PartialEq<$name<'a>> for $name<'a> {
-            fn eq(&self, other: &$name) -> bool {
+            fn eq(&self, other: &$name<'_>) -> bool {
                 self.value.eq(&other.value)
             }
         }
@@ -1297,7 +1306,7 @@ where
         .all(|k| valid_keys.contains(k.as_str()) || is_extension_key(k))
 }
 
-fn is_valid_attachment(map: &Map<String, Value>, version: &Version) -> bool {
+fn is_valid_attachment(map: &Map<String, Value>, version: &Version<'_>) -> bool {
     match version {
         Version::Unknown(_) => return false,
         Version::Version1 | Version::Version1_1 => {}
@@ -1322,26 +1331,26 @@ fn is_valid_attachment(map: &Map<String, Value>, version: &Version) -> bool {
 
 impl Attachment {
     /// Verifies if the JSON data complies with a specific `Version` of the JSON Feed spec.
-    pub fn is_valid(&self, version: &Version) -> bool {
+    pub fn is_valid(&self, version: &Version<'_>) -> bool {
         is_valid_attachment(&self.value, version)
     }
 }
 
 impl<'a> AttachmentMut<'a> {
     /// Verifies if the JSON data complies with a specific `Version` of the JSON Feed spec.
-    pub fn is_valid(&self, version: &Version) -> bool {
+    pub fn is_valid(&self, version: &Version<'_>) -> bool {
         is_valid_attachment(self.value, version)
     }
 }
 
 impl<'a> AttachmentRef<'a> {
     /// Verifies if the JSON data complies with a specific `Version` of the JSON Feed spec.
-    pub fn is_valid(&self, version: &Version) -> bool {
+    pub fn is_valid(&self, version: &Version<'_>) -> bool {
         is_valid_attachment(self.value, version)
     }
 }
 
-fn is_valid_author(map: &Map<String, Value>, version: &Version) -> bool {
+fn is_valid_author(map: &Map<String, Value>, version: &Version<'_>) -> bool {
     match version {
         Version::Unknown(_) => return false,
         Version::Version1 | Version::Version1_1 => {}
@@ -1367,26 +1376,26 @@ fn is_valid_author(map: &Map<String, Value>, version: &Version) -> bool {
 
 impl Author {
     /// Verifies if the JSON data complies with a specific `Version` of the JSON Feed spec.
-    pub fn is_valid(&self, version: &Version) -> bool {
+    pub fn is_valid(&self, version: &Version<'_>) -> bool {
         is_valid_author(&self.value, version)
     }
 }
 
 impl<'a> AuthorMut<'a> {
     /// Verifies if the JSON data complies with a specific `Version` of the JSON Feed spec.
-    pub fn is_valid(&self, version: &Version) -> bool {
+    pub fn is_valid(&self, version: &Version<'_>) -> bool {
         is_valid_author(self.value, version)
     }
 }
 
 impl<'a> AuthorRef<'a> {
     /// Verifies if the JSON data complies with a specific `Version` of the JSON Feed spec.
-    pub fn is_valid(&self, version: &Version) -> bool {
+    pub fn is_valid(&self, version: &Version<'_>) -> bool {
         is_valid_author(self.value, version)
     }
 }
 
-fn is_valid_feed(map: &Map<String, Value>, version: &Version) -> bool {
+fn is_valid_feed(map: &Map<String, Value>, version: &Version<'_>) -> bool {
     match version {
         Version::Unknown(_) => return false,
         Version::Version1 | Version::Version1_1 => {}
@@ -1454,26 +1463,26 @@ fn is_valid_feed(map: &Map<String, Value>, version: &Version) -> bool {
 
 impl Feed {
     /// Verifies if the JSON data complies with a specific `Version` of the JSON Feed spec.
-    pub fn is_valid(&self, version: &Version) -> bool {
+    pub fn is_valid(&self, version: &Version<'_>) -> bool {
         is_valid_feed(&self.value, version)
     }
 }
 
 impl<'a> FeedMut<'a> {
     /// Verifies if the JSON data complies with a specific `Version` of the JSON Feed spec.
-    pub fn is_valid(&self, version: &Version) -> bool {
+    pub fn is_valid(&self, version: &Version<'_>) -> bool {
         is_valid_feed(self.value, version)
     }
 }
 
 impl<'a> FeedRef<'a> {
     /// Verifies if the JSON data complies with a specific `Version` of the JSON Feed spec.
-    pub fn is_valid(&self, version: &Version) -> bool {
+    pub fn is_valid(&self, version: &Version<'_>) -> bool {
         is_valid_feed(self.value, version)
     }
 }
 
-fn is_valid_hub(map: &Map<String, Value>, version: &Version) -> bool {
+fn is_valid_hub(map: &Map<String, Value>, version: &Version<'_>) -> bool {
     match version {
         Version::Unknown(_) => return false,
         Version::Version1 | Version::Version1_1 => {}
@@ -1492,26 +1501,26 @@ fn is_valid_hub(map: &Map<String, Value>, version: &Version) -> bool {
 
 impl Hub {
     /// Verifies if the JSON data complies with a specific `Version` of the JSON Feed spec.
-    pub fn is_valid(&self, version: &Version) -> bool {
+    pub fn is_valid(&self, version: &Version<'_>) -> bool {
         is_valid_hub(&self.value, version)
     }
 }
 
 impl<'a> HubMut<'a> {
     /// Verifies if the JSON data complies with a specific `Version` of the JSON Feed spec.
-    pub fn is_valid(&self, version: &Version) -> bool {
+    pub fn is_valid(&self, version: &Version<'_>) -> bool {
         is_valid_hub(self.value, version)
     }
 }
 
 impl<'a> HubRef<'a> {
     /// Verifies if the JSON data complies with a specific `Version` of the JSON Feed spec.
-    pub fn is_valid(&self, version: &Version) -> bool {
+    pub fn is_valid(&self, version: &Version<'_>) -> bool {
         is_valid_hub(self.value, version)
     }
 }
 
-fn is_valid_item(map: &Map<String, Value>, version: &Version) -> bool {
+fn is_valid_item(map: &Map<String, Value>, version: &Version<'_>) -> bool {
     match version {
         Version::Unknown(_) => return false,
         Version::Version1 | Version::Version1_1 => {}
@@ -1577,21 +1586,21 @@ fn is_valid_item(map: &Map<String, Value>, version: &Version) -> bool {
 
 impl Item {
     /// Verifies if the JSON data complies with a specific `Version` of the JSON Feed spec.
-    pub fn is_valid(&self, version: &Version) -> bool {
+    pub fn is_valid(&self, version: &Version<'_>) -> bool {
         is_valid_item(&self.value, version)
     }
 }
 
 impl<'a> ItemMut<'a> {
     /// Verifies if the JSON data complies with a specific `Version` of the JSON Feed spec.
-    pub fn is_valid(&self, version: &Version) -> bool {
+    pub fn is_valid(&self, version: &Version<'_>) -> bool {
         is_valid_item(self.value, version)
     }
 }
 
 impl<'a> ItemRef<'a> {
     /// Verifies if the JSON data complies with a specific `Version` of the JSON Feed spec.
-    pub fn is_valid(&self, version: &Version) -> bool {
+    pub fn is_valid(&self, version: &Version<'_>) -> bool {
         is_valid_item(self.value, version)
     }
 }
@@ -1689,7 +1698,7 @@ mod tests {
             ]
         });
 
-        let feed = super::from_value(json)?;
+        let feed = from_value(json)?;
 
         assert!(feed.is_valid(&Version::Version1_1));
 
@@ -1698,9 +1707,9 @@ mod tests {
         assert_eq!(feed.home_page_url()?, Some("https://example.org/"));
         assert_eq!(feed.feed_url()?, Some("https://example.org/feed.json"));
 
-        let items: Option<Vec<ItemRef>> = feed.items()?;
+        let items: Option<Vec<ItemRef<'_>>> = feed.items()?;
         assert!(items.is_some());
-        let items: Vec<ItemRef> = items.unwrap();
+        let items: Vec<ItemRef<'_>> = items.unwrap();
         assert_eq!(items.len(), 2);
 
         assert_eq!(items[0].id()?, Some("cd7f0673-8e81-4e13-b273-4bd1b83967d0"));
@@ -1740,7 +1749,7 @@ mod tests {
                 }
             ]
         });
-        let feed = super::from_value(json).unwrap();
+        let feed = from_value(json).unwrap();
 
         assert!(feed.is_valid(&Version::Version1_1));
 
@@ -1810,7 +1819,7 @@ mod tests {
                 }
             ]
         });
-        assert_eq!(feed, super::from_value(expected_json.clone())?);
+        assert_eq!(feed, from_value(expected_json.clone())?);
         assert_eq!(serde_json::to_value(feed.clone())?, expected_json);
 
         let output = serde_json::to_string(&feed);
@@ -1832,7 +1841,7 @@ mod tests {
                 }
             ]
         });
-        let feed = super::from_value(json).unwrap();
+        let feed = from_value(json).unwrap();
 
         assert!(feed.is_valid(&Version::Version1_1));
         assert!(feed.is_valid(&Version::Version1));
@@ -1853,7 +1862,7 @@ mod tests {
                 }
             ]
         });
-        let feed = super::from_value(json).unwrap();
+        let feed = from_value(json).unwrap();
 
         assert!(feed.is_valid(&Version::Version1_1));
         assert!(!feed.is_valid(&Version::Version1));
@@ -1918,7 +1927,7 @@ mod tests {
                 }
             ]
         });
-        assert_eq!(feed, super::from_value(expected_json)?);
+        assert_eq!(feed, from_value(expected_json)?);
 
         assert_eq!(feed.example()?, Some("123456"));
 
