@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## v0.2.0
+
+### Updated
+
+* Add #[must_use] to various functions
+* Fixup documentation
+
 ## v0.1.1
 
 ### Updated
