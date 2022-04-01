@@ -18,11 +18,7 @@
     unused_qualifications
 )]
 
-#[cfg(all(not(feature = "std"), feature = "alloc", not(test)))]
-extern crate alloc;
-
-#[cfg(all(not(feature = "std"), feature = "alloc", test))]
-#[macro_use]
+#[cfg(all(feature = "alloc", not(feature = "std")))]
 extern crate alloc;
 
 use core::str;
@@ -442,6 +438,7 @@ macro_rules! trait_for_borrowed_type {
     ($name:ident) => {
         impl<'a> $name<'a> {
             /// Returns the inner `Map` as a reference.
+            #[must_use]
             pub fn as_map(&self) -> &Map<String, Value> {
                 self.value
             }
@@ -494,11 +491,13 @@ macro_rules! json_feed_map_type {
 
         impl $owned {
             /// Instantiates with an empty JSON object.
+            #[must_use]
             pub fn new() -> Self {
                 Self { value: Map::new() }
             }
 
             /// Returns the inner `Map` as a reference.
+            #[must_use]
             pub fn as_map(&self) -> &Map<String, Value> {
                 &self.value
             }
@@ -509,6 +508,7 @@ macro_rules! json_feed_map_type {
             }
 
             /// Converts the type into the inner `Map`.
+            #[must_use]
             pub fn into_inner(self) -> Map<String, Value> {
                 self.value
             }
@@ -602,6 +602,7 @@ macro_rules! json_feed_map_type {
 
         impl<'a> $borrowed<'a> {
             /// Clones the inner `Map` reference and returns an owned type.
+            #[must_use]
             pub fn $to_owned(&self) -> $owned {
                 $owned::from(self.value.clone())
             }
@@ -639,6 +640,7 @@ macro_rules! json_feed_map_type {
             }
 
             /// Clones the inner `Map` reference and returns an owned type.
+            #[must_use]
             pub fn $to_owned(&self) -> $owned {
                 $owned::from(self.value.clone())
             }
@@ -1298,7 +1300,7 @@ fn is_extension_key(key: &str) -> bool {
     key.as_bytes().iter().next() == Some(&b'_')
 }
 
-fn are_keys_valid<'a, I>(keys: I, valid_keys: BTreeSet<&str>) -> bool
+fn are_keys_valid<'a, I>(keys: I, valid_keys: &BTreeSet<&str>) -> bool
 where
     I: IntoIterator<Item = &'a String>,
 {
@@ -1326,11 +1328,12 @@ fn is_valid_attachment(map: &Map<String, Value>, version: &Version<'_>) -> bool 
         && attachment_ref.title().is_ok()
         && attachment_ref.size_in_bytes().is_ok()
         && attachment_ref.duration_in_seconds().is_ok()
-        && are_keys_valid(map.keys(), valid_keys)
+        && are_keys_valid(map.keys(), &valid_keys)
 }
 
 impl Attachment {
     /// Verifies if the JSON data complies with a specific `Version` of the JSON Feed spec.
+    #[must_use]
     pub fn is_valid(&self, version: &Version<'_>) -> bool {
         is_valid_attachment(&self.value, version)
     }
@@ -1338,6 +1341,7 @@ impl Attachment {
 
 impl<'a> AttachmentMut<'a> {
     /// Verifies if the JSON data complies with a specific `Version` of the JSON Feed spec.
+    #[must_use]
     pub fn is_valid(&self, version: &Version<'_>) -> bool {
         is_valid_attachment(self.value, version)
     }
@@ -1345,6 +1349,7 @@ impl<'a> AttachmentMut<'a> {
 
 impl<'a> AttachmentRef<'a> {
     /// Verifies if the JSON data complies with a specific `Version` of the JSON Feed spec.
+    #[must_use]
     pub fn is_valid(&self, version: &Version<'_>) -> bool {
         is_valid_attachment(self.value, version)
     }
@@ -1371,11 +1376,12 @@ fn is_valid_author(map: &Map<String, Value>, version: &Version<'_>) -> bool {
         && (name_result.map_or(false, |name| name.is_some())
             || avatar_result.map_or(false, |avatar| avatar.is_some())
             || url_result.map_or(false, |url| url.is_some()))
-        && are_keys_valid(map.keys(), valid_keys)
+        && are_keys_valid(map.keys(), &valid_keys)
 }
 
 impl Author {
     /// Verifies if the JSON data complies with a specific `Version` of the JSON Feed spec.
+    #[must_use]
     pub fn is_valid(&self, version: &Version<'_>) -> bool {
         is_valid_author(&self.value, version)
     }
@@ -1383,6 +1389,7 @@ impl Author {
 
 impl<'a> AuthorMut<'a> {
     /// Verifies if the JSON data complies with a specific `Version` of the JSON Feed spec.
+    #[must_use]
     pub fn is_valid(&self, version: &Version<'_>) -> bool {
         is_valid_author(self.value, version)
     }
@@ -1390,6 +1397,7 @@ impl<'a> AuthorMut<'a> {
 
 impl<'a> AuthorRef<'a> {
     /// Verifies if the JSON data complies with a specific `Version` of the JSON Feed spec.
+    #[must_use]
     pub fn is_valid(&self, version: &Version<'_>) -> bool {
         is_valid_author(self.value, version)
     }
@@ -1426,14 +1434,12 @@ fn is_valid_feed(map: &Map<String, Value>, version: &Version<'_>) -> bool {
         v.map_or(false, |v| match Version::from(v) {
             Version::Unknown(_) => false,
             Version::Version1 => match version {
-                Version::Version1 => true,
-                Version::Version1_1 => true,
+                Version::Version1 | Version::Version1_1 => true,
                 Version::Unknown(_) => false,
             },
             Version::Version1_1 => match version {
-                Version::Version1 => false,
+                Version::Version1 | Version::Unknown(_) => false,
                 Version::Version1_1 => true,
-                Version::Unknown(_) => false,
             },
         })
     }) && feed_ref
@@ -1458,11 +1464,12 @@ fn is_valid_feed(map: &Map<String, Value>, version: &Version<'_>) -> bool {
         && feed_ref.authors().is_ok()
         && feed_ref.language().is_ok()
         && feed_ref.expired().is_ok()
-        && are_keys_valid(map.keys(), valid_keys)
+        && are_keys_valid(map.keys(), &valid_keys)
 }
 
 impl Feed {
     /// Verifies if the JSON data complies with a specific `Version` of the JSON Feed spec.
+    #[must_use]
     pub fn is_valid(&self, version: &Version<'_>) -> bool {
         is_valid_feed(&self.value, version)
     }
@@ -1470,6 +1477,7 @@ impl Feed {
 
 impl<'a> FeedMut<'a> {
     /// Verifies if the JSON data complies with a specific `Version` of the JSON Feed spec.
+    #[must_use]
     pub fn is_valid(&self, version: &Version<'_>) -> bool {
         is_valid_feed(self.value, version)
     }
@@ -1477,6 +1485,7 @@ impl<'a> FeedMut<'a> {
 
 impl<'a> FeedRef<'a> {
     /// Verifies if the JSON data complies with a specific `Version` of the JSON Feed spec.
+    #[must_use]
     pub fn is_valid(&self, version: &Version<'_>) -> bool {
         is_valid_feed(self.value, version)
     }
@@ -1496,11 +1505,12 @@ fn is_valid_hub(map: &Map<String, Value>, version: &Version<'_>) -> bool {
         && hub_ref
             .hub_type()
             .map_or(false, |hub_type| hub_type.is_some())
-        && are_keys_valid(map.keys(), valid_keys)
+        && are_keys_valid(map.keys(), &valid_keys)
 }
 
 impl Hub {
     /// Verifies if the JSON data complies with a specific `Version` of the JSON Feed spec.
+    #[must_use]
     pub fn is_valid(&self, version: &Version<'_>) -> bool {
         is_valid_hub(&self.value, version)
     }
@@ -1508,6 +1518,7 @@ impl Hub {
 
 impl<'a> HubMut<'a> {
     /// Verifies if the JSON data complies with a specific `Version` of the JSON Feed spec.
+    #[must_use]
     pub fn is_valid(&self, version: &Version<'_>) -> bool {
         is_valid_hub(self.value, version)
     }
@@ -1515,6 +1526,7 @@ impl<'a> HubMut<'a> {
 
 impl<'a> HubRef<'a> {
     /// Verifies if the JSON data complies with a specific `Version` of the JSON Feed spec.
+    #[must_use]
     pub fn is_valid(&self, version: &Version<'_>) -> bool {
         is_valid_hub(self.value, version)
     }
@@ -1581,11 +1593,12 @@ fn is_valid_item(map: &Map<String, Value>, version: &Version<'_>) -> bool {
         && item_ref.author().is_ok()
         && item_ref.tags().is_ok()
         && item_ref.language().is_ok()
-        && are_keys_valid(map.keys(), valid_keys)
+        && are_keys_valid(map.keys(), &valid_keys)
 }
 
 impl Item {
     /// Verifies if the JSON data complies with a specific `Version` of the JSON Feed spec.
+    #[must_use]
     pub fn is_valid(&self, version: &Version<'_>) -> bool {
         is_valid_item(&self.value, version)
     }
@@ -1593,6 +1606,7 @@ impl Item {
 
 impl<'a> ItemMut<'a> {
     /// Verifies if the JSON data complies with a specific `Version` of the JSON Feed spec.
+    #[must_use]
     pub fn is_valid(&self, version: &Version<'_>) -> bool {
         is_valid_item(self.value, version)
     }
@@ -1600,6 +1614,7 @@ impl<'a> ItemMut<'a> {
 
 impl<'a> ItemRef<'a> {
     /// Verifies if the JSON data complies with a specific `Version` of the JSON Feed spec.
+    #[must_use]
     pub fn is_valid(&self, version: &Version<'_>) -> bool {
         is_valid_item(self.value, version)
     }
@@ -1676,6 +1691,8 @@ pub fn from_value(value: Value) -> Result<Feed, Error> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[cfg(all(feature = "alloc", not(feature = "std")))]
+    use alloc::vec;
 
     #[test]
     fn simple_example() -> Result<(), Error> {
@@ -1829,7 +1846,7 @@ mod tests {
     }
 
     #[test]
-    fn is_valid_version_forward_compatible() -> Result<(), Error> {
+    fn is_valid_version_forward_compatible() {
         let json = serde_json::json!({
             "version": "https://jsonfeed.org/version/1",
             "title": "Lorem ipsum dolor sit amet.",
@@ -1845,12 +1862,10 @@ mod tests {
 
         assert!(feed.is_valid(&Version::Version1_1));
         assert!(feed.is_valid(&Version::Version1));
-
-        Ok(())
     }
 
     #[test]
-    fn is_valid_version_backward_compatible() -> Result<(), Error> {
+    fn is_valid_version_backward_compatible() {
         let json = serde_json::json!({
             "version": "https://jsonfeed.org/version/1.1",
             "title": "Lorem ipsum dolor sit amet.",
@@ -1866,8 +1881,6 @@ mod tests {
 
         assert!(feed.is_valid(&Version::Version1_1));
         assert!(!feed.is_valid(&Version::Version1));
-
-        Ok(())
     }
 
     #[test]
