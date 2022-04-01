@@ -1,12 +1,22 @@
 # JSON Feed Model
 
-[JSON Feed][jsonfeed] Model provides types which can be used to manipulate JSON Feed
-data.
+[JSON Feed][jsonfeed] Model provides types which can be used to manipulate JSON
+Feed data.
 
-The crate is basically a [newtype][newtype] wrapper around [Serde JSON][serde_json]'s `Map` type and provides methods
-to JSON Feed properties.
+The crate is basically a [newtype][newtype] wrapper around [Serde
+JSON][serde_json]'s `Map` type and provides methods to JSON Feed properties.
 
-* [Latest API Documentation][api_docs]
+For example, a library user can have a slice of bytes and create a `Feed` by
+calling `from_slice`. If the slice of bytes is a JSON object, then a `Feed`
+instance is returned. The only guarantee which `Feed` and other model types make
+is that the JSON data is a JSON object.
+
+The library user can call `is_valid(Version::Version1_1)` on the `Feed` instance
+to determine if the JSON object is a valid Version 1.1 JSON Feed.
+
+## Documentation
+
+* [Latest API Docs][api_docs]
 
 ## Installation
 
@@ -25,6 +35,32 @@ If the host environment has an allocator but does not have access to the Rust `s
 [dependencies]
 json-feed-model = { version = "0.1.1", default-features = false, features = ["alloc"]}
 ```
+
+# Accessor Methods
+
+If the library user wants to read or write data, then methods like `title()`,
+`set_title(...)`, and `remove_title()` exist on `Feed`.
+
+For "getter" methods, the return type is a `Result<Option<type>, ...>`.  The
+"getter" may fail due to expecting the wrong JSON type. For instance, if a field
+is expected to be a JSON string but the value is a JSON number, then an
+`Error::UnexpectedType` will be returned. The field value may or may not be
+present so the `Option` type is used to indicate if a value exists.
+
+For "setter" and "remove" methods, any existing value in the JSON object is
+returned.
+
+# Owned, Borrowed, and Borrowed Mutable Types
+
+There are 3 variants of every model type, the "owned" data type (e.g. `Feed`),
+the borrowed data type (e.g.  `FeedRef`), and the borrowed mutable data type
+(e.g. `FeedMut`). In most cases, the "owned" data type will be the primary kind
+explicitly used. The borrowed and borrowed mutable variants may be returned from
+"getter" methods for performance reasons.
+
+A few standard traits are implemented like `From<Map<String,Value>>` and
+`Serialize` as well as a few helper methods like `as_map()` and `as_map_mut()`
+for the model types.
 
 ## Examples
 
@@ -82,6 +118,7 @@ assert_eq!(
     Some("Vestibulum non magna vitae tortor.")
 );
 assert_eq!(items[1].url()?, Some("https://example.org/vestibulum-non"));
+# Ok::<(), json_feed_model::Error>(())
 ```
 
 ### Custom Extension
@@ -155,6 +192,7 @@ assert_eq!(feed.example()?, Some("123456"));
 
 let output = serde_json::to_string(&feed);
 assert!(output.is_ok());
+# Ok::<(), json_feed_model::Error>(())
 ```
 
 ## License
