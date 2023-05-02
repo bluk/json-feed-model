@@ -17,6 +17,7 @@ include = [
   "LICENSE-APACHE",
   "LICENSE-MIT",
 ]
+rust-version = "1.41.0"
 
 [dependencies]
 serde = { version = "1.0", default-features = false }
