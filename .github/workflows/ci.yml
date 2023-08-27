@@ -19,13 +19,7 @@ jobs:
           - windows-latest
         rust:
           - stable
-          - 1.41.0
-        exclude:
-          - os: macos-latest
-            rust: 1.41.0
-        include:
-          - os: macos-11
-            rust: 1.41.0
+          - 1.56.0
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout sources
@@ -54,13 +48,7 @@ jobs:
           - windows-latest
         rust:
           - stable
-          - 1.41.0
-        exclude:
-          - os: macos-latest
-            rust: 1.41.0
-        include:
-          - os: macos-11
-            rust: 1.41.0
+          - 1.56.0
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout sources

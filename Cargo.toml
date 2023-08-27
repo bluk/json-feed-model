@@ -4,7 +4,7 @@ version = "0.2.0"
 license = "MIT OR Apache-2.0"
 authors = ["Bryant Luk <code@bryantluk.com>"]
 description = "JSON Feed model"
-edition = "2018"
+edition = "2021"
 repository = "https://github.com/bluk/json-feed-model"
 documentation = "https://docs.rs/json-feed-model"
 readme = "README.md"
@@ -17,7 +17,7 @@ include = [
   "LICENSE-APACHE",
   "LICENSE-MIT",
 ]
-rust-version = "1.41.0"
+rust-version = "1.56.0"
 
 [dependencies]
 serde = { version = "1.0", default-features = false }
