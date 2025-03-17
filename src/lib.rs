@@ -252,7 +252,7 @@ pub enum Version<'a> {
     Unknown(&'a str),
 }
 
-impl<'a> AsRef<str> for Version<'a> {
+impl AsRef<str> for Version<'_> {
     fn as_ref(&self) -> &str {
         match self {
             Version::Version1 => VERSION_1,
@@ -272,7 +272,7 @@ impl<'a> From<&'a str> for Version<'a> {
     }
 }
 
-impl<'a> core::fmt::Display for Version<'a> {
+impl core::fmt::Display for Version<'_> {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         write!(f, "{}", self.as_ref())
     }
@@ -1536,7 +1536,7 @@ impl Attachment {
     }
 }
 
-impl<'a> AttachmentMut<'a> {
+impl AttachmentMut<'_> {
     /// Verifies if the JSON data complies with a specific `Version` of the JSON Feed spec.
     #[must_use]
     pub fn is_valid(&self, version: &Version<'_>) -> bool {
@@ -1544,7 +1544,7 @@ impl<'a> AttachmentMut<'a> {
     }
 }
 
-impl<'a> AttachmentRef<'a> {
+impl AttachmentRef<'_> {
     /// Verifies if the JSON data complies with a specific `Version` of the JSON Feed spec.
     #[must_use]
     pub fn is_valid(&self, version: &Version<'_>) -> bool {
@@ -1584,7 +1584,7 @@ impl Author {
     }
 }
 
-impl<'a> AuthorMut<'a> {
+impl AuthorMut<'_> {
     /// Verifies if the JSON data complies with a specific `Version` of the JSON Feed spec.
     #[must_use]
     pub fn is_valid(&self, version: &Version<'_>) -> bool {
@@ -1592,7 +1592,7 @@ impl<'a> AuthorMut<'a> {
     }
 }
 
-impl<'a> AuthorRef<'a> {
+impl AuthorRef<'_> {
     /// Verifies if the JSON data complies with a specific `Version` of the JSON Feed spec.
     #[must_use]
     pub fn is_valid(&self, version: &Version<'_>) -> bool {
@@ -1672,7 +1672,7 @@ impl Feed {
     }
 }
 
-impl<'a> FeedMut<'a> {
+impl FeedMut<'_> {
     /// Verifies if the JSON data complies with a specific `Version` of the JSON Feed spec.
     #[must_use]
     pub fn is_valid(&self, version: &Version<'_>) -> bool {
@@ -1680,7 +1680,7 @@ impl<'a> FeedMut<'a> {
     }
 }
 
-impl<'a> FeedRef<'a> {
+impl FeedRef<'_> {
     /// Verifies if the JSON data complies with a specific `Version` of the JSON Feed spec.
     #[must_use]
     pub fn is_valid(&self, version: &Version<'_>) -> bool {
@@ -1713,7 +1713,7 @@ impl Hub {
     }
 }
 
-impl<'a> HubMut<'a> {
+impl HubMut<'_> {
     /// Verifies if the JSON data complies with a specific `Version` of the JSON Feed spec.
     #[must_use]
     pub fn is_valid(&self, version: &Version<'_>) -> bool {
@@ -1721,7 +1721,7 @@ impl<'a> HubMut<'a> {
     }
 }
 
-impl<'a> HubRef<'a> {
+impl HubRef<'_> {
     /// Verifies if the JSON data complies with a specific `Version` of the JSON Feed spec.
     #[must_use]
     pub fn is_valid(&self, version: &Version<'_>) -> bool {
@@ -1801,7 +1801,7 @@ impl Item {
     }
 }
 
-impl<'a> ItemMut<'a> {
+impl ItemMut<'_> {
     /// Verifies if the JSON data complies with a specific `Version` of the JSON Feed spec.
     #[must_use]
     pub fn is_valid(&self, version: &Version<'_>) -> bool {
@@ -1809,7 +1809,7 @@ impl<'a> ItemMut<'a> {
     }
 }
 
-impl<'a> ItemRef<'a> {
+impl ItemRef<'_> {
     /// Verifies if the JSON data complies with a specific `Version` of the JSON Feed spec.
     #[must_use]
     pub fn is_valid(&self, version: &Version<'_>) -> bool {
